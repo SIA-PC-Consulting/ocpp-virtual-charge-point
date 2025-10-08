@@ -19,7 +19,7 @@ const GetReportReqSchema = z.object({
       z.object({
         component: ComponentTypeSchema,
         variable: VariableTypeSchema.nullish(),
-      }),
+      })
     )
     .nullish(),
 });
@@ -37,7 +37,7 @@ class GetReportOcppIncoming extends OcppIncoming<
 > {
   reqHandler = async (
     vcp: VCP,
-    call: OcppCall<z.infer<GetReportReqType>>,
+    call: OcppCall<z.infer<GetReportReqType>>
   ): Promise<void> => {
     vcp.respond(this.response(call, { status: "Accepted" }));
     vcp.send(
@@ -45,8 +45,31 @@ class GetReportOcppIncoming extends OcppIncoming<
         generatedAt: new Date().toISOString(),
         requestId: call.payload.requestId,
         seqNo: 1,
-        reportData: [],
-      }),
+        reportData: [
+          {
+            component: {
+              name: "OCPPCommCtrlr",
+            },
+            variable: {
+              name: "HeartbeatInterval",
+            },
+            variableAttribute: [
+              {
+                type: "Actual",
+                value: "60",
+                mutability: "ReadWrite",
+                persistent: true,
+                constant: false,
+              },
+            ],
+            variableCharacteristics: {
+              unit: "s",
+              dataType: "integer",
+              supportsMonitoring: false,
+            },
+          },
+        ],
+      })
     );
   };
 }
@@ -54,5 +77,5 @@ class GetReportOcppIncoming extends OcppIncoming<
 export const getReportOcppIncoming = new GetReportOcppIncoming(
   "GetReport",
   GetReportReqSchema,
-  GetReportResSchema,
+  GetReportResSchema
 );
