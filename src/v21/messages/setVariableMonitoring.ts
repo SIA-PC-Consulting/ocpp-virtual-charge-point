@@ -63,7 +63,7 @@ class SetVariableMonitoringOcppIncoming extends OcppIncoming<
       this.response(call, {
         setMonitoringResult: call.payload.setMonitoringData.map((data) => ({
           status: "Accepted",
-          id: data.id,
+          id: Math.round(Math.random() * 1000000),
           severity: data.severity,
           type: data.type,
           component: data.component,

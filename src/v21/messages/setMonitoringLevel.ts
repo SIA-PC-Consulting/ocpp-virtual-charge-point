@@ -22,7 +22,7 @@ class SetMonitoringLevelOcppIncoming extends OcppIncoming<
     vcp: VCP,
     call: OcppCall<z.infer<SetMonitoringLevelReqType>>,
   ): Promise<void> => {
-    vcp.respond(this.response(call, { status: "Accepted" }));
+    vcp.respond(this.response(call, { status: "Rejected" }));
   };
 }
 

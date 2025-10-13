@@ -12,10 +12,7 @@ const ClosePeriodicEventStreamReqSchema = z.object({
 });
 type ClosePeriodicEventStreamReqType = typeof ClosePeriodicEventStreamReqSchema;
 
-const ClosePeriodicEventStreamResSchema = z.object({
-  status: z.enum(["Accepted", "Rejected"]),
-  statusInfo: StatusInfoTypeSchema.nullish(),
-});
+const ClosePeriodicEventStreamResSchema = z.object({});
 type ClosePeriodicEventStreamResType = typeof ClosePeriodicEventStreamResSchema;
 
 class ClosePeriodicEventStreamOcppOutgoing extends OcppOutgoing<
