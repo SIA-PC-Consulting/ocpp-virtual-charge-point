@@ -8,6 +8,7 @@ import { VCP } from "./src/vcp";
 import { openPeriodicEventStreamOcppOutgoing } from "./src/v21/messages/openPeriodicEventStream";
 import { notifyPeriodicEventStreamOcppOutgoing } from "./src/v21/messages/notifyPeriodicEventStream";
 import { closePeriodicEventStreamOcppOutgoing } from "./src/v21/messages/closePeriodicEventStream";
+import { notifyEventOcppOutgoing } from "./src/v21/messages/notifyEvent";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -31,14 +32,39 @@ const vcp = new VCP({
     }),
   );  
   await sleep(4000);
+  // vcp.send(
+  //   statusNotificationOcppOutgoing.request({
+  //     evseId: 1,
+  //     connectorId: 1,
+  //     connectorStatus: "Available",
+  //     timestamp: new Date().toISOString(),
+  //   }),
+  // );
   vcp.send(
-    statusNotificationOcppOutgoing.request({
-      evseId: 1,
-      connectorId: 1,
-      connectorStatus: "Available",
-      timestamp: new Date().toISOString(),
+    notifyEventOcppOutgoing.request({
+      generatedAt: new Date().toISOString(),
+      tbc: false,
+      seqNo: 0,
+      eventData: [{
+        eventId: Math.floor(Math.random() * 1000000),
+        timestamp: new Date().toISOString(),
+        trigger: 'Alerting',
+        actualValue: "Occupied",
+        eventNotificationType: 'PreconfiguredMonitor',
+        component: {
+          name: 'Connector',
+          evse: {
+            id: 1,
+            connectorId: 1,
+          },
+        },
+        variable: {
+          name: 'AvailabilityState'
+        }
+      }]
     }),
   );
+  
   await sleep(3000);
   vcp.send(
     openPeriodicEventStreamOcppOutgoing.request({
