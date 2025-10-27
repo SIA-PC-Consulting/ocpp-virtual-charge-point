@@ -1,0 +1,4 @@
+{
+  "csr": "-----BEGIN CERTIFICATE REQUEST-----\\n[CSR_DATA_WOULD_GO_HERE]\\n-----END CERTIFICATE REQUEST-----",
+  "certificateType": "ChargingStationCertificate"
+}

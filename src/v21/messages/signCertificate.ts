@@ -32,11 +32,14 @@ class SignCertificateOcppOutgoing extends OcppOutgoing<
   SignCertificateResType
 > {
   resHandler = async (
-    _vcp: VCP,
-    _call: OcppCall<z.infer<SignCertificateReqType>>,
-    _result: OcppCallResult<z.infer<SignCertificateResType>>,
+    vcp: VCP,
+    call: OcppCall<z.infer<SignCertificateReqType>>,
+    result: OcppCallResult<z.infer<SignCertificateResType>>,
   ): Promise<void> => {
-    // NOOP
+    // Store the request ID for later use when CertificateSigned arrives
+    if (call.payload.requestId) {
+      (vcp as any).pendingCertificateRequestId = call.payload.requestId;
+    }
   };
 }
 

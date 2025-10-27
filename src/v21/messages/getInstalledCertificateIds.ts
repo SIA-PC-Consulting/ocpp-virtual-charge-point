@@ -2,6 +2,7 @@ import { z } from "zod";
 import { type OcppCall, OcppIncoming } from "../../ocppMessage";
 import type { VCP } from "../../vcp";
 import { CertificateHashDataTypeSchema, StatusInfoTypeSchema } from "./_common";
+import { generateSampleCertificateHashDataChain } from "../../utils/certUtils";
 
 const GetInstalledCertificateIdsReqSchema = z.object({
   certificateType: z
@@ -54,7 +55,25 @@ class GetInstalledCertificateIdsOcppIncoming extends OcppIncoming<
     vcp: VCP,
     call: OcppCall<z.infer<GetInstalledCertificateIdsReqType>>,
   ): Promise<void> => {
-    vcp.respond(this.response(call, { status: "Accepted" }));
+    // Get the requested certificate types from the request
+    const requestedTypes = call.payload.certificateType;
+    
+    // If no certificate types are requested, return empty array
+    if (!requestedTypes || requestedTypes.length === 0) {
+      vcp.respond(this.response(call, { 
+        status: "Accepted", 
+        certificateHashDataChain: [] 
+      }));
+      return;
+    }
+    
+    // Generate sample certificate hash data chain for only the requested types
+    const certificateHashDataChain = generateSampleCertificateHashDataChain(requestedTypes);
+    
+    vcp.respond(this.response(call, { 
+      status: "Accepted", 
+      certificateHashDataChain: certificateHashDataChain 
+    }));
   };
 }
 

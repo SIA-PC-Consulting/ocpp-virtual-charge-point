@@ -26,6 +26,13 @@ class CertificateSignedOcppIncoming extends OcppIncoming<
     vcp: VCP,
     call: OcppCall<z.infer<CertificateSignedReqType>>,
   ): Promise<void> => {
+    console.log('CertificateSigned received:', call.payload);
+    
+    // Store the certificate chain for later use
+    (vcp as any).receivedCertificateChain = call.payload.certificateChain;
+    (vcp as any).receivedCertificateType = call.payload.certificateType;
+    (vcp as any).receivedCertificateRequestId = call.payload.requestId;
+    
     vcp.respond(this.response(call, { status: "Accepted" }));
   };
 }
