@@ -9,7 +9,9 @@
     "check": "npm run lint && npm run format && npm run typecheck",
     "base": "tsx --env-file=.env index_21.ts",
     "testcert": "tsx --env-file=.env index_21_certificates.ts",
-    "testcertinstallreq": "tsx --env-file=.env index_21_cert_install_req.ts"
+    "testcertinstallreq": "tsx --env-file=.env index_21_cert_install_req.ts",
+    "testtransaction": "tsx --env-file=.env index_21_transaction_start.ts",
+    "testtransaction16": "tsx --env-file=.env index_16_transaction.ts"
   },
   "author": "Solidstudio",
   "license": "Apache-2.0",
