@@ -33,7 +33,14 @@ class GetTariffsOcppIncoming extends OcppIncoming<
     vcp: VCP,
     call: OcppCall<z.infer<GetTariffsReqType>>,
   ): Promise<void> => {
-    vcp.respond(this.response(call, { status: "NoTariff" }));
+    vcp.respond(this.response(call, { status: "Accepted", tariffAssignments: [
+      {
+        tariffId: "CSTariff1",
+        tariffKind: "DefaultTariff",
+        validFrom: new Date().toISOString(),
+        evseIds: [1]
+      }
+    ] }));
   };
 }
 

@@ -29,7 +29,7 @@ class SetDefaultTariffOcppIncoming extends OcppIncoming<
     vcp: VCP,
     call: OcppCall<z.infer<SetDefaultTariffReqType>>,
   ): Promise<void> => {
-    vcp.respond(this.response(call, { status: "Accepted" }));
+    vcp.respond(this.response(call, { status: "Rejected" }));
   };
 }
 
