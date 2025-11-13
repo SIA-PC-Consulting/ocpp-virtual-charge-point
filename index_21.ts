@@ -2,9 +2,10 @@ require("dotenv").config();
 
 import { OcppVersion } from "./src/ocppVersion";
 import { bootNotificationOcppOutgoing } from "./src/v21/messages/bootNotification";
-import { securityEventNotificationOcppOutgoing } from "./src/v21/messages/securityEventNotification";
+import { dataTransferOcppOutgoing } from "./src/v21/messages/dataTransfer";
 import { statusNotificationOcppOutgoing } from "./src/v21/messages/statusNotification";
 import { VCP } from "./src/vcp";
+import { v4 as uuidv4 } from 'uuid';
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -39,12 +40,27 @@ const vcp = new VCP({
     })
   );
 
+  // Accepted
   await sleep(5001);
-
   vcp.send(
-    securityEventNotificationOcppOutgoing.request({
-      type: "SecurityEvent",
-      timestamp: new Date().toISOString(),
+    dataTransferOcppOutgoing.request({
+      vendorId: "ANT",
+      messageId: uuidv4(),
+      data: {
+        action: "CustomAction",
+      },
+    })
+  );
+
+  // NotImplemented
+  await sleep(5001);
+  vcp.send(
+    dataTransferOcppOutgoing.request({
+      vendorId: "ENG",
+      messageId: uuidv4(),
+      data: {
+        action: "CustomAction",
+      },
     })
   );
 })();

@@ -2,6 +2,7 @@ import { z } from "zod";
 import { type OcppCall, OcppIncoming } from "../../ocppMessage";
 import type { VCP } from "../../vcp";
 import { StatusInfoTypeSchema } from "./_common";
+import { firmwareStatusNotificationOcppOutgoing } from "./firmwareStatusNotification";
 
 const UpdateFirmwareReqSchema = z.object({
   retries: z.number().int().nullish(),
@@ -29,6 +30,10 @@ const UpdateFirmwareResSchema = z.object({
 });
 type UpdateFirmwareResType = typeof UpdateFirmwareResSchema;
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 class UpdateFirmwareOcppIncoming extends OcppIncoming<
   UpdateFirmwareReqType,
   UpdateFirmwareResType
@@ -37,7 +42,68 @@ class UpdateFirmwareOcppIncoming extends OcppIncoming<
     vcp: VCP,
     call: OcppCall<z.infer<UpdateFirmwareReqType>>,
   ): Promise<void> => {
+    // 2. The Charging station responds with an UpdateFirmwareResponse
     vcp.respond(this.response(call, { status: "Accepted" }));
+
+    // 3. The Charging station sends a FirmwareStatusNotificationRequest with status Downloading
+    await sleep(1000);
+    vcp.send(
+      firmwareStatusNotificationOcppOutgoing.request({
+        status: "Downloading",
+        requestId: call.payload.requestId,
+        statusInfo: {
+          reasonCode: "Downloading",
+          additionalInfo: "Firmware download in progress",
+        },
+      })
+    );
+
+    // 4. The CSMS responds with a FirmwareStatusNotificationResponse (handled automatically)
+
+    // 5. The Charging station sends a FirmwareStatusNotificationRequest with status Downloaded
+    await sleep(5000);
+    vcp.send(
+      firmwareStatusNotificationOcppOutgoing.request({
+        status: "Downloaded",
+        requestId: call.payload.requestId,
+        statusInfo: {
+          reasonCode: "Downloaded",
+          additionalInfo: "Firmware download completed successfully",
+        },
+      })
+    );
+
+    // 6. The CSMS responds with a FirmwareStatusNotificationResponse (handled automatically)
+
+    // 7. The Charging station sends a FirmwareStatusNotificationRequest with status Installing
+    await sleep(1000);
+    vcp.send(
+      firmwareStatusNotificationOcppOutgoing.request({
+        status: "Installing",
+        requestId: call.payload.requestId,
+        statusInfo: {
+          reasonCode: "Installing",
+          additionalInfo: "Firmware installation in progress",
+        },
+      })
+    );
+
+    // 8. The CSMS responds with a FirmwareStatusNotificationResponse (handled automatically)
+
+    // 9. The Charging station sends a FirmwareStatusNotificationRequest with status Installed
+    await sleep(5000);
+    vcp.send(
+      firmwareStatusNotificationOcppOutgoing.request({
+        status: "Installed",
+        requestId: call.payload.requestId,
+        statusInfo: {
+          reasonCode: "Installed",
+          additionalInfo: "Firmware installation completed successfully",
+        },
+      })
+    );
+
+    // 10. The CSMS responds with a FirmwareStatusNotificationResponse (handled automatically)
   };
 }
 
