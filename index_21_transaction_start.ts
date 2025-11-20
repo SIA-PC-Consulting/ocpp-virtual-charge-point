@@ -110,4 +110,47 @@ const vcp = new VCP({
       ]
     })
   )
+
+  await sleep(3000)
+
+  vcp.send(
+    transactionEventOcppOutgoing.request({
+      eventType: "Ended",
+      timestamp: new Date().toISOString(),
+      seqNo: 1,
+      triggerReason: "MeterValueClock",
+      transactionInfo: {
+        chargingState: "Charging",
+        transactionId: "123456",
+        tariffId: "123456",
+      },
+      costDetails: {
+        chargingPeriods: [
+          {
+            tariffId: "123456",
+            startPeriod: new Date().toISOString(),
+            dimensions: [
+              {
+                type: "Energy",
+                volume: 1000
+              }
+            ]
+          }
+        ], 
+        totalUsage: {
+          energy: 1000,
+          chargingTime: 1000,
+          idleTime: 0,
+        },
+        totalCost: {
+          currency: "EUR",
+          total: {
+            exclTax: 20.00,
+            inclTax: 24.00,
+          },
+          typeOfCost: "NormalCost",
+        }
+      }
+    })
+  )
 })();
