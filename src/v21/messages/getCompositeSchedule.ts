@@ -84,7 +84,18 @@ class GetCompositeScheduleOcppIncoming extends OcppIncoming<
     vcp: VCP,
     call: OcppCall<z.infer<GetCompositeScheduleReqType>>,
   ): Promise<void> => {
-    vcp.respond(this.response(call, { status: "Accepted" }));
+    vcp.respond(this.response(call, { status: "Accepted", schedule: {
+      evseId: call.payload.evseId,
+      duration: call.payload.duration,
+      scheduleStart: new Date().toISOString(),
+      chargingRateUnit: call.payload.chargingRateUnit ?? "W",
+      chargingSchedulePeriod: [
+        {
+          startPeriod: 0,
+          limit: 10,
+        },
+      ],
+    }}));
   };
 }
 

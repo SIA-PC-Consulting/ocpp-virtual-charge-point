@@ -4,7 +4,7 @@ import {
   type OcppCallResult,
   OcppOutgoing,
 } from "../../ocppMessage";
-import { ChargingScheduleSchema } from "../../v16/messages/_common";
+import { ChargingScheduleSchema } from "../../v21/messages/_common";
 import type { VCP } from "../../vcp";
 import { GenericStatusEnumSchema, StatusInfoTypeSchema } from "./_common";
 
