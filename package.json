@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit --esModuleInterop --skipLibCheck src/**/*.ts",
     "check": "npm run lint && npm run format && npm run typecheck",
     "base": "tsx --env-file=.env index_21.ts",
+    "batteryswap": "tsx --env-file=.env index_21_battery_swap.ts",
     "testcert": "tsx --env-file=.env index_21_certificates.ts",
     "testcertinstallreq": "tsx --env-file=.env index_21_cert_install_req.ts",
     "testtransaction": "tsx --env-file=.env index_21_transaction_start.ts",
