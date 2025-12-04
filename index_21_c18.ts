@@ -1,6 +1,5 @@
 require("dotenv").config();
 
-import path from "path";
 import * as uuid from "uuid";
 import { OcppVersion } from "./src/ocppVersion";
 import { authorizeOcppOutgoing } from "./src/v21/messages/authorize";
@@ -10,7 +9,7 @@ import { securityEventNotificationOcppOutgoing } from "./src/v21/messages/securi
 import { statusNotificationOcppOutgoing } from "./src/v21/messages/statusNotification";
 import { transactionEventOcppOutgoing } from "./src/v21/messages/transactionEvent";
 import { VCP } from "./src/vcp";
-import { generateOCSPRequestDataWithOpenSSL } from "./src/utils/certUtils";
+import { notifySettlementOcppOutgoing } from "./src/v21/messages/notifySettlement";
 
 function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -85,65 +84,23 @@ const vcp = new VCP({
   );
 
   await sleep(5001);
-
-  // EV connects to connector
   vcp.send(
-    notifyEventOcppOutgoing.request({
-      generatedAt: new Date().toISOString(),
-      tbc: false,
-      seqNo: 0,
-      eventData: [
-        {
-          eventId: Math.floor(Math.random() * 1000002),
-          timestamp: new Date().toISOString(),
-          trigger: "Alerting",
-          actualValue: "Occupied",
-          eventNotificationType: "PreconfiguredMonitor",
-          component: {
-            name: "Connector",
-            evse: {
-              id: 1,
-              connectorId: 1,
-            },
-          },
-          variable: {
-            name: "AvailabilityState",
-          },
-        },
-      ],
+    notifySettlementOcppOutgoing.request({
+      pspRef: "PAYMENT_REF_123456789",
+      status: "Settled",
+      settlementAmount: 15.5,
+      settlementTime: "2025-01-27T10:30:00.000Z",
     })
   );
 
   await sleep(5001);
-
-  // TransactionEventRequest
-  vcp.send(
-    transactionEventOcppOutgoing.request({
-      timestamp: new Date().toISOString(),
-      seqNo: 0,
-      eventType: "Started",
-      triggerReason: "CablePluggedIn",
-      transactionInfo: {
-        transactionId: uuid.v4(),
-        chargingState: "EVConnected",
-      },
-    })
-  );
-
-  await sleep(5001);
-  const ocspData = await generateOCSPRequestDataWithOpenSSL(
-    path.resolve(__dirname, "leafcert.pem"),
-    path.resolve(__dirname, "issuer.pem"),
-    "http://ocsp-qa.hubject.com:8080"
-  );
-
   vcp.send(
     authorizeOcppOutgoing.request({
       idToken: {
-        idToken: "RFID-12345678",
-        type: "eMAID",
+        idToken: "PAYMENT_REF_123456789",
+        type: "DirectPayment",
       },
-      iso15118CertificateHashData: [ocspData],
     })
   );
+
 })();
